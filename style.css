@@ -1,47 +1,55 @@
-body{
+tr {
+  height: 50px;
+} 
+
+body {
+  background-color: beige;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
   text-align: center;
 }
 
-/* Set a fixed height for each row */
-tr {
-  height: 50px;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-/* Style the skeleton lines with a gradient */
-.skeleton-line {
-  background: linear-gradient(90deg, #eee 25%, #ddd 37%, #eee 63%);
-  background-size: 400% 100%;
-  animation: skeleton-loading 1.4s ease-in-out infinite;
-}
-
-/* Animate the background gradient */
-/* @keyframes skeleton-loading {
-  0% {
-    background-position: 100% 50%;
-  }
-  50% {
-    background-position: 0 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
-} */
-
-/* Style the table header */
-th {
-  background-color: #222;
-  color: #fff;
-  padding: 12px;
+th,
+td {
+  padding: 10px;
+  border: 1px solid #ddd;
   text-align: left;
 }
 
-/* Style the table cells */
-td {
-  background-color: lightgray;
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
+th {
+  background-color: black;
+  color: white;
 }
 
+.skeleton-line {
+  width: 100%;
+  height: 0.7rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
+  animation: skeleton-loading 1s linear infinite;
+}
+
+
+@keyframes skeleton-loading {
+   0% {
+    background-color: hsl(200, 20%, 80%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+}
 
 table {
   margin: auto;

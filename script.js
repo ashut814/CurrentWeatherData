@@ -1,41 +1,82 @@
-const cities = ["Mumbai", "Delhi", "Lucknow", "Bengaluru", "Hyderabad"];
+const cities = ["Mumbai", "Delhi", "Lucknow", "Bengaluru", "Hyderabad","Indore","Patna"];
 const tableBody = document.getElementById("weather-data");
+const showSkeleton = () => {
+  for (let i = 0; i < cities.length; i++) {
+    const tableRow = document.createElement("tr");
+    tableRow.classList.add("skeleton-line");
+    tableRow.innerHTML = `
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    `;
+    tableBody.appendChild(tableRow);
+  }
+};
 
-// Function to fetch weather data from OpenWeatherMap API
+const hideSkeleton = () => {
+  const skeletonRows = document.querySelectorAll(".skeleton-line");
+  skeletonRows.forEach((row) => row.remove());
+};
+
 const getWeatherData = async (city) => {
-  const response = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=f457b5ce872a3e9e47332937d42392af&units=metric`
-  );
-  const data = await response.json();
+  let data = null;
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=f457b5ce872a3e9e47332937d42392af&units=metric`
+    );
+    if (response.ok) {
+      data = await response.json();
+    }
+  } catch (err) {
+    console.log(err);
+  }
   return data;
 };
 
-const skeleton = document.getElementsByClassName(".skeleton-line");
-for (let i = 1; i < cities.length; i++){
-  tableBody.append(skeleton.content.cloneNode(true));
-}
 
-// Function to populate table with weather data for a given city
-const populateTable = (data) => {
+const insertRow = (rowData) => {
   const tableRow = document.createElement("tr");
   tableRow.innerHTML = `
-    <td>${data.name}</td>
-    <td>${data.main.temp}&deg;C</td>
-    <td>${data.weather[0].description}</td>
-    <td>${data.wind.speed} m/s</td>
-    <td>${data.main.humidity}%</td>
+    <td>${rowData.name}</td>
+    <td>${rowData.main.temp}&deg;C</td>
+    <td>${rowData.weather[0].description}</td>
+    <td>${rowData.wind.speed} m/s</td>
+    <td>${rowData.main.humidity}%</td>
   `;
   tableBody.appendChild(tableRow);
 };
 
-// Function to fetch weather data for all cities in the 'cities' array and populate the table
-const getCitiesWeatherData = async () => {
-  for (const city of cities) {
-    const data = await getWeatherData(city);
-    populateTable(data);
-  }
-  tableBody.innerHTML = "";
+const populateTable = (data) => {
+  data.forEach((rowData) => {
+    insertRow(rowData);
+  });
 };
 
-// Call the 'getCitiesWeatherData' function to populate the table with weather data for all cities
-getCitiesWeatherData();
+const getCitiesWeatherData = async () => {
+  showSkeleton();
+  const weatherData = [];
+  for (const city of cities) {
+    const data = await getWeatherData(city);
+    if (data != null) {
+      weatherData.push(data);
+    }
+  }
+    if (weatherData.length > 0) {
+      hideSkeleton();
+      populateTable(weatherData);
+    } else {
+     const tableHeader = document.getElementsByTagName("thead")[0];
+     tableHeader.style.display = "none";
+     const errorMessage = document.getElementById("error-message");
+     errorMessage.innerText = "Weather data cannot be acquired.";
+     errorMessage.style.display = "block";
+     hideSkeleton();
+    }
+};
+
+window.addEventListener("load", getCitiesWeatherData());
+
+
+
